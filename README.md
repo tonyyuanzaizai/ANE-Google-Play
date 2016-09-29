@@ -1,51 +1,22 @@
-Air Native Extension for Facebook (iOS + Android)
+Air Native Extension for GooglePlayService (Android)
 ======================================
 
 This is an [Air native extension](http://www.adobe.com/devnet/air/native-extensions-for-air.html) for [Facebook SDK](https://developers.facebook.com/docs#apis-and-sdks) on iOS and Android. It has been originally developed by [FreshPlanet](http://freshplanet.com). I will try to maintain this project. For any suggestions open a issue.
 
-
-Facebook SDK Versions
+GooglePlayService SDK Versions
 ---------
 
-* iOS: 4.6.0
-* Android: 4.6.0
+* Android: 9.4.0
 
 **IMPORTANT NOTE:** Please use -swf-version=29 and AIR >= 18 when you use this ANE otherwise you can have some issues. 
 
 **IMPORTANT NOTE FOR ANDROID:** Use this ANE only when you build with AIR >=18. New FB Android SDK needs Java 1.7 and extension compiled with Java 1.7 will not work with AIR 16 (AIR 17 had a lot of issues with Android so I don't consider it either). Context of extension will not be created on Android. There should be no issues with iOS.
 
-**IMPORTANT NOTE FOR IOS 9:** With IOS 9 you must update your application descriptor to match [these changes](https://developers.facebook.com/docs/ios/ios9).
-
 Installation
 ---------
 
-The ANE binary (AirFacebook.ane) is located in the *bin* folder. You should add it to your application project's Build Path and make sure to package it with your app (more information [here](http://help.adobe.com/en_US/air/build/WS597e5dadb9cc1e0253f7d2fc1311b491071-8000.html)).
+The ANE binary (AirGooglePlayService.ane) is located in the *bin* folder. You should add it to your application project's Build Path and make sure to package it with your app (more information [here](http://help.adobe.com/en_US/air/build/WS597e5dadb9cc1e0253f7d2fc1311b491071-8000.html)).
 
-On iOS:
-
-* as explained [here](http://developers.facebook.com/docs/mobile/ios/build/), you will need to add some Info.plist additions in your application descriptor:
-
-```xml
-<iPhone>
-    
-    <InfoAdditions><![CDATA[
-
-        <key>CFBundleURLTypes</key>
-        <array>
-            <dict>
-                <key>CFBundleURLSchemes</key>
-                    <array>
-                        <string>fb{YOUR_FB_APPLICATION_ID}</string>
-                    </array>
-            </dict>
-        </array>
-        <key>FacebookAppID</key>
-        <string>{YOUR_FB_APPLICATION_ID}</string>
-
-    ]]></InfoAdditions>
-
-</iPhone>
-```
 
 On Android:
 
@@ -65,21 +36,12 @@ On Android:
             <application>
 
                 ...
-
-                <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="fb{YOUR_FB_APPLICATION_ID}"/>
-
-                <activity android:name="com.facebook.FacebookActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"
-                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:label="{YOUR_APP_NAME}" />
-                <activity android:name="com.freshplanet.ane.AirFacebook.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"
-                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
-                <activity android:name="com.freshplanet.ane.AirFacebook.ShareDialogActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"
-                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
-                <activity android:name="com.freshplanet.ane.AirFacebook.AppInviteActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"
-                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
-                <activity android:name="com.freshplanet.ane.AirFacebook.GameRequestActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"
-                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
-
-                <provider android:authorities="com.facebook.app.FacebookContentProvider{YOUR_FB_APPLICATION_ID}" android:name="com.facebook.FacebookContentProvider" android:exported="true"/>
+				
+				<!-- GooglePlay Games Services 311712923402 -->
+				<meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 311712923402" />
+				<meta-data android:name="com.google.android.gms.appstate.APP_ID" android:value="\ 311712923402" />
+				<meta-data android:name="com.google.android.gms.version" android:value="9452000"/>
+				<activity android:name="com.freshplanet.googleplaygames.MainActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
                 
             </application>
 
