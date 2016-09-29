@@ -1,7 +1,7 @@
 Air Native Extension for GooglePlayService (Android)
 ======================================
 
-This is an [Air native extension](http://www.adobe.com/devnet/air/native-extensions-for-air.html) for [Facebook SDK](https://developers.facebook.com/docs#apis-and-sdks) on iOS and Android. It has been originally developed by [FreshPlanet](http://freshplanet.com). I will try to maintain this project. For any suggestions open a issue.
+This is an [Air native extension](http://www.adobe.com/devnet/air/native-extensions-for-air.html) for [play-services SDK](http://developer.android.com/google/play-services/) on iOS and Android. It has been originally developed by [FreshPlanet](http://freshplanet.com). I will try to maintain this project. For any suggestions open a issue.
 
 GooglePlayService SDK Versions
 ---------
