@@ -2,7 +2,7 @@ package com.freshplanet.ane.AirGooglePlayGames
 {
 	import flash.events.Event;
 	
-	public class AirGooglePlayGamesEvent extends Event
+	public class GooglePlayGamesEvent extends Event
 	{
 		
 		public static const ON_SIGN_IN_SUCCESS:String = "ON_SIGN_IN_SUCCESS";
@@ -10,7 +10,7 @@ package com.freshplanet.ane.AirGooglePlayGames
 		public static const ON_SIGN_OUT_SUCCESS:String = "ON_SIGN_OUT_SUCCESS";
 		public static const ON_PLAYER_IMAGE_READY:String = "ON_PLAYER_IMAGE_READY";
 		
-		public function AirGooglePlayGamesEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function GooglePlayGamesEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
 		}

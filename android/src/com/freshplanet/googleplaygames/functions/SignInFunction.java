@@ -5,17 +5,15 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.googleplaygames.Extension;
 
-public class AirGooglePlayGamesSignOutFunction implements FREFunction {
+public class SignInFunction implements FREFunction {
 
-	public AirGooglePlayGamesSignOutFunction() {
+	public SignInFunction() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public FREObject call(FREContext arg0, FREObject[] arg1) {
-		Extension.context.createHelperIfNeeded(arg0.getActivity());
-		Extension.context.signOut();
+		Extension.context.signIn();
 		return null;
 	}
-
 }

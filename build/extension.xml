@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////////-->
 
 <extension xmlns="http://ns.adobe.com/air/extension/23.0">
-  <id>com.freshplanet.android-support-v4</id>
+  <id>com.freshplanet.googleplaygames</id>
   <versionNumber>1</versionNumber>
   <platforms>
 

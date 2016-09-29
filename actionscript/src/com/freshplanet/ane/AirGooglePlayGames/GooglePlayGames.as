@@ -24,7 +24,7 @@ package com.freshplanet.ane.AirGooglePlayGames
 	import flash.external.ExtensionContext;
 	import flash.system.Capabilities;
 	
-	public class AirGooglePlayGames extends EventDispatcher
+	public class GooglePlayGames extends EventDispatcher
 	{
 		// --------------------------------------------------------------------------------------//
 		//																						 //
@@ -38,7 +38,7 @@ package com.freshplanet.ane.AirGooglePlayGames
 			return Capabilities.manufacturer.indexOf("Android") != -1;
 		}
 		
-		public function AirGooglePlayGames()
+		public function GooglePlayGames()
 		{ 
 			if (!_instance)
 			{
@@ -58,14 +58,14 @@ package com.freshplanet.ane.AirGooglePlayGames
 			}
 		}
 		
-		public static function getInstance() : AirGooglePlayGames
+		public static function getInstance() : GooglePlayGames
 		{
-			return _instance ? _instance : new AirGooglePlayGames();
+			return _instance ? _instance : new GooglePlayGames();
 		}
 		
 		public function startAtLaunch():void
 		{
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
 				_context.call("startAtLaunch");
 			}
@@ -73,7 +73,7 @@ package com.freshplanet.ane.AirGooglePlayGames
 		
 		public function signIn():void
 		{
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
 				_context.call("signIn");
 			}
@@ -81,50 +81,69 @@ package com.freshplanet.ane.AirGooglePlayGames
 		
 		public function signOut():void
 		{
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
 				_context.call("signOut");
 			}
 		}
 		
-		public function reportAchievement(achievementId:String, percent:Number = 0):void
+		public function showAchievements():void
 		{
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
-				_context.call("reportAchievemnt", achievementId, percent);
+				_context.call("showAchievements");
 			}
 		}
 		
-		public function reportScore(leaderboardId:String, newScore:Number):void
+		public function incrementAchievement(achievementId:String, percent:Number = 0):void
 		{
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
-				_context.call("reportScore", leaderboardId, newScore);
+				_context.call("incrementAchievement", achievementId, percent);
+			}
+		}
+		public function unlockAchievement(achievementId:String):void
+		{
+			if (GooglePlayGames.isSupported)
+			{
+				_context.call("unlockAchievement", achievementId);
 			}
 		}
 		
-		public function showStandardAchievements():void
+		public function showLeaderboard(leaderboardId:String):void
 		{
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
-				_context.call("showStandardAchievements");
+				_context.call("showLeaderboard", leaderboardId);
+			}
+		}
+		
+		public function submitScore(leaderboardId:String, newScore:Number):void
+		{
+			if (GooglePlayGames.isSupported)
+			{
+				_context.call("submitScore", leaderboardId, newScore);
 			}
 		}
 		
 		public function getActivePlayerName():String
 		{
 			var name:String;
-			if (AirGooglePlayGames.isSupported)
+			if (GooglePlayGames.isSupported)
 			{
 				name = _context.call("getActivePlayerName") as String;
 			}
 			return name;
 		}
 		
-		public function getLeaderboard( leaderboardId:String ):void
+		public function getActivePlayerId():String
 		{
-			if (AirGooglePlayGames.isSupported)
-				_context.call("getLeaderboard", leaderboardId );
+			var name:String;
+			if (GooglePlayGames.isSupported)
+			{
+				name = _context.call("getActivePlayerId") as String;
+			}
+			return name;
 		}
 		
 		
@@ -134,36 +153,36 @@ package com.freshplanet.ane.AirGooglePlayGames
 		// 																						 //
 		// --------------------------------------------------------------------------------------//
 		
-		private static const EXTENSION_ID : String = "com.freshplanet.AirGooglePlayGamesService";
+		private static const EXTENSION_ID : String = "com.freshplanet.googleplaygames";
 		
-		private static var _instance : AirGooglePlayGames;
+		private static var _instance : GooglePlayGames;
 		
 		private var _context : ExtensionContext;
 		
 		private function onStatus( event : StatusEvent ) : void
 		{
-			trace("[AirGooglePlayGames]", event);
+			trace("[GooglePlayGames]", event);
 			var e:Event;
 			if (event.code == "ON_SIGN_IN_SUCCESS")
 			{
-				e = new AirGooglePlayGamesEvent(AirGooglePlayGamesEvent.ON_SIGN_IN_SUCCESS);
+				e = new GooglePlayGamesEvent(GooglePlayGamesEvent.ON_SIGN_IN_SUCCESS);
 			} else if (event.code == "ON_SIGN_IN_FAIL")
 			{
-				e = new AirGooglePlayGamesEvent(AirGooglePlayGamesEvent.ON_SIGN_IN_FAIL);
+				e = new GooglePlayGamesEvent(GooglePlayGamesEvent.ON_SIGN_IN_FAIL);
 			} else if (event.code == "ON_SIGN_OUT_SUCCESS")
 			{
-				e = new AirGooglePlayGamesEvent(AirGooglePlayGamesEvent.ON_SIGN_OUT_SUCCESS);
+				e = new GooglePlayGamesEvent(GooglePlayGamesEvent.ON_SIGN_OUT_SUCCESS);
 			} else if (event.code == "ON_LEADERBOARD_LOADED")
 			{
 				var jsonArray:Array = JSON.parse( event.level ) as Array;
 				if( jsonArray ) {
 					var leaderboard:GSLeaderboard = GSLeaderboard.fromJSONObject( jsonArray );
 					if( leaderboard )
-						e = new AirGooglePlayGamesLeaderboardEvent(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADED, leaderboard);
+						e = new GooglePlayGamesLeaderboardEvent(GooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADED, leaderboard);
 				}
 			} else if (event.code == "ON_LEADERBOARD_FAILED")
 			{
-				e = new Event(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADING_FAILED );
+				e = new Event(GooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADING_FAILED );
 			}
 			
 			if (e) {

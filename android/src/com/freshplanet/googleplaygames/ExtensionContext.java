@@ -1,60 +1,60 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright 2013 Freshplanet (http://freshplanet.com | opensource@freshplanet.com)
-//  
+//
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
 //  You may obtain a copy of the License at
-//  
+//
 //    http://www.apache.org/licenses/LICENSE-2.0
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
-//  
+//
 //////////////////////////////////////////////////////////////////////////////////////
 
 package com.freshplanet.googleplaygames;
-
-import android.app.Activity;
-import android.util.Log;
-
-import com.adobe.fre.FREContext;
-import com.adobe.fre.FREFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesGetActivePlayerName;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesGetLeaderboardFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesReportAchievementFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesReportScoreFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesShowAchievementsFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesSignInFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayGamesSignOutFunction;
-import com.freshplanet.googleplaygames.functions.AirGooglePlayStartAtLaunch;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.Player;
-import com.google.android.gms.games.leaderboard.LeaderboardScore;
-import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
-import com.google.android.gms.games.leaderboard.LeaderboardVariant;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExtensionContext extends FREContext implements GameHelper.GameHelperListener
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.adobe.fre.FREContext;
+import com.adobe.fre.FREFunction;
+import com.freshplanet.googleplaygames.functions.GetActivePlayerIdFunction;
+import com.freshplanet.googleplaygames.functions.GetActivePlayerNameFunction;
+import com.freshplanet.googleplaygames.functions.IncrementAchievementFunction;
+import com.freshplanet.googleplaygames.functions.ShowAchievementsFunction;
+import com.freshplanet.googleplaygames.functions.ShowLeaderboardFunction;
+import com.freshplanet.googleplaygames.functions.SignInFunction;
+import com.freshplanet.googleplaygames.functions.SignOutFunction;
+import com.freshplanet.googleplaygames.functions.SubmitScoreFunction;
+import com.freshplanet.googleplaygames.functions.UnlockAchievementFunction;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.Player;
+import com.google.android.gms.games.leaderboard.LeaderboardScore;
+import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
+
+public class ExtensionContext extends FREContext
 {
-	
+
     final int RC_UNUSED = 5001;
 	// Public API
-	
-	public static GameHelper mHelper;
-	
+
 	@Override
 	public void dispose() { }
 
@@ -62,114 +62,45 @@ public class ExtensionContext extends FREContext implements GameHelper.GameHelpe
 	public Map<String, FREFunction> getFunctions()
 	{
 		Map<String, FREFunction> functionMap = new HashMap<String, FREFunction>();
-		functionMap.put("startAtLaunch", new AirGooglePlayStartAtLaunch());
-		functionMap.put("signIn", new AirGooglePlayGamesSignInFunction());
-		functionMap.put("signOut", new AirGooglePlayGamesSignOutFunction());
-		functionMap.put("reportAchievemnt", new AirGooglePlayGamesReportAchievementFunction());
-		functionMap.put("reportScore", new AirGooglePlayGamesReportScoreFunction());
-		functionMap.put("showStandardAchievements", new AirGooglePlayGamesShowAchievementsFunction());
-		functionMap.put("getActivePlayerName", new AirGooglePlayGamesGetActivePlayerName());
-        functionMap.put("getLeaderboard", new AirGooglePlayGamesGetLeaderboardFunction());
+		functionMap.put("signIn", new SignInFunction());
+		functionMap.put("signOut", new SignOutFunction());
+		functionMap.put("showLeaderboard", new ShowLeaderboardFunction());
+		functionMap.put("submitScore", new SubmitScoreFunction());
+
+		functionMap.put("showAchievements", new ShowAchievementsFunction());
+		functionMap.put("unlockAchievement", new UnlockAchievementFunction());
+		functionMap.put("incrementAchievement", new IncrementAchievementFunction());
+
+		functionMap.put("getActivePlayerName", new GetActivePlayerNameFunction());
+		functionMap.put("getActivePlayerId", new GetActivePlayerIdFunction());
 		return functionMap;
 	}
-	
+
 	public void dispatchEvent(String eventName)
 	{
 		dispatchEvent(eventName, "OK");
 	}
-	
+
 	public void logEvent(String eventName)
 	{
-		Log.i("[AirGooglePlayGames]", eventName);
+		Log.i("GPServicesActivity", eventName);
 	}
 
-	
+
 	public void dispatchEvent(String eventName, String eventData)
 	{
-		logEvent(eventName);
 		if (eventData == null)
 		{
 			eventData = "OK";
 		}
+		logEvent("dispatchEvent:" + eventName +"|"+ eventData +"|"+ playerName +"|"+ playerId);
 		dispatchStatusEventAsync(eventName, eventData);
 	}
-	
-	public GameHelper createHelperIfNeeded(Activity activity)
-	{
-		if (mHelper == null)
-		{
-			logEvent("create helper");
-			mHelper = new GameHelper(activity, GameHelper.CLIENT_GAMES | GameHelper.CLIENT_PLUS);
-			logEvent("setup");
-			mHelper.setup(this);
-		}
-		return mHelper;
-	}
 
-	private List<Activity> _activityInstances;
-	
-	public void registerActivity(Activity activity)
-	{
-		if (_activityInstances == null)
-		{
-			_activityInstances = new ArrayList<Activity>();
-		}
-		_activityInstances.add(activity);
-	}
-	
-	public void signOut()
-	{
-		logEvent("signOut");
+	public String playerName;
+	public String playerId;
 
-		mHelper.signOut();
-		dispatchEvent("ON_SIGN_OUT_SUCCESS");
-	}
-
-	public Boolean isSignedIn()
-	{
-		logEvent("isSignedIn");
-        return mHelper.isSignedIn();
-	}
-	
-	public GoogleApiClient getApiClient() {
-        return mHelper.getApiClient();
-    }
-
-	
-	public void reportAchivements(String achievementId)
-	{
-    	if (!isSignedIn()) {
-            return;
-        }
-    	Games.Achievements.unlock(getApiClient(), achievementId);
-	}
-
-	
-	public void reportAchivements(String achievementId, double percentDouble)
-	{
-		if (percentDouble > 0 && percentDouble <= 1){
-    		int percent = (int) (percentDouble * 100);
-    		Games.Achievements.setSteps(getApiClient(), achievementId, percent);
-    	}
-	}
-	
-	public void reportScore(String leaderboardId, int highScore)
-	{
-		Games.Leaderboards.submitScore(getApiClient(), leaderboardId, highScore);
-	}
-
-    public void getLeaderboard( String leaderboardId ) {
-
-		Games.Leaderboards.loadTopScores(
-				getApiClient(),
-				leaderboardId,
-				LeaderboardVariant.TIME_SPAN_ALL_TIME,
-				LeaderboardVariant.COLLECTION_SOCIAL,
-				25,
-				true
-		).setResultCallback(new ScoresLoadedListener());
-    }
-
+////////callback function///////
     public void onLeaderboardLoaded( LeaderboardScoreBuffer scores ) {
         dispatchEvent( "ON_LEADERBOARD_LOADED", scoresToJsonString(scores) );
     }
@@ -197,41 +128,115 @@ public class ExtensionContext extends FREContext implements GameHelper.GameHelpe
             } catch( JSONException e ) {}
         }
         return jsonScores.toString();
-
     }
 
-	@Override
 	public void onSignInFailed() {
 		logEvent("onSignInFailed");
 		dispatchEvent("ON_SIGN_IN_FAIL");
-		if (_activityInstances != null)
-		{
-			for (Activity activity : _activityInstances)
-			{
-				if (activity != null)
-				{
-					activity.finish();
-				}
-			}
-			_activityInstances = null;
-		}
 	}
 
-	@Override
 	public void onSignInSucceeded() {
 		logEvent("onSignInSucceeded");
 		dispatchEvent("ON_SIGN_IN_SUCCESS");
-		if (_activityInstances != null)
-		{
-			for (Activity activity : _activityInstances)
-			{
-				if (activity != null)
-				{
-					activity.finish();
-				}
-			}
-			_activityInstances = null;
-		}
 	}
-	
+	public void onSignInFailedReason(int reason)
+    {
+		logEvent("onSignInFailedReason:" + reason);
+		onSignInFailed();
+    }
+	///////////////////public api///////
+    public boolean isSignedIn()
+    {
+    	init();
+    	
+        SharedPreferences preferences = getActivity().getPreferences(0);
+        return preferences.getBoolean("AneGoogleServicesIsSignedIn", false);
+    }
+
+    public void setIsSignedIn(boolean value)
+    {
+    	init();
+    	
+        SharedPreferences preferences = getActivity().getPreferences(0);
+        android.content.SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("AneGoogleServicesIsSignedIn", value);
+        editor.commit();
+    }
+    
+    public void signIn()
+    {
+    	init();
+    	
+        System.out.println("ANE signIn:");
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+        intent.putExtra("method", "signin");
+        getActivity().startActivity(intent);
+    }
+    public void signOut()
+    {
+    	init();
+    	
+        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+        intent.putExtra("method", "signout");
+        getActivity().startActivity(intent);
+    }
+
+    public void submitScore(String leaderboardId, long score)
+    {
+    	init();
+    	
+        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+        intent.putExtra("method", "submitScore");
+        intent.putExtra("leaderboardId", leaderboardId);
+        intent.putExtra("score", score);
+        getActivity().startActivity(intent);
+    }
+
+    public void showLeaderboard(String leaderboardId)
+    {
+    	init();
+    	
+        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+        intent.putExtra("method", "showLeaderboard");
+        intent.putExtra("leaderboardId", leaderboardId);
+        getActivity().startActivity(intent);
+    }
+
+    public void unlockAchievement(String id)
+    {
+    	init();
+    	
+        Intent intent = new Intent(getActivity().getApplicationContext(), com.freshplanet.googleplaygames.MainActivity.class);
+        intent.putExtra("method", "unlockAchievement");
+        intent.putExtra("achievementId", id);
+        getActivity().startActivity(intent);
+    }
+
+    public void incrementAchievement(String id, int incrementSteps)
+    {
+    	init();
+    	
+        Intent intent = new Intent(getActivity().getApplicationContext(), com.freshplanet.googleplaygames.MainActivity.class);
+        intent.putExtra("method", "incrementAchievement");
+        intent.putExtra("achievementId", id);
+        intent.putExtra("incrementSteps", incrementSteps);
+        getActivity().startActivity(intent);
+    }
+
+    public void showAchievements()
+    {
+    	init();
+    	
+        Intent intent = new Intent(getActivity().getApplicationContext(), com.freshplanet.googleplaygames.MainActivity.class);
+        intent.putExtra("method", "showAchievements");
+        getActivity().startActivity(intent);
+    }
+    
+    
+    ////////
+    private void init()
+    {
+        System.out.println("Extension.init-mGoogleApiClient");
+    }
 }

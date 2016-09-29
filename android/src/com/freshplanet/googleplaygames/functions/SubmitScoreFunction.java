@@ -5,9 +5,9 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.googleplaygames.Extension;
 
-public class AirGooglePlayGamesReportScoreFunction implements FREFunction {
+public class SubmitScoreFunction implements FREFunction {
 
-	public AirGooglePlayGamesReportScoreFunction() {
+	public SubmitScoreFunction() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -29,8 +29,7 @@ public class AirGooglePlayGamesReportScoreFunction implements FREFunction {
 			return null;
 		}
 
-		Extension.context.createHelperIfNeeded(arg0.getActivity());
-		Extension.context.reportScore(leaderboardId, newScore);
+		Extension.context.submitScore(leaderboardId, newScore);
 		
 		return null;
 	}
