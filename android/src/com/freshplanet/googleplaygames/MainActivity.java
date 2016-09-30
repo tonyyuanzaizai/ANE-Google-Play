@@ -113,28 +113,28 @@ public class MainActivity extends GPServicesActivity
         {
             signOut();
             finishActivity();
-        } else
-        if("showLeaderboard".equalsIgnoreCase(method))
+        } 
+        else if("showLeaderboard".equalsIgnoreCase(method))
         {
             showLeaderboard(intent.getStringExtra("leaderboardId"));
             finishActivity();
-        } else
-        if("submitScore".equalsIgnoreCase(method))
+        } 
+        else if("submitScore".equalsIgnoreCase(method))
         {
             submitScore(intent.getStringExtra("leaderboardId"), intent.getLongExtra("score", 0L));
             finishActivity();
-        } else
-        if("unlockAchievement".equalsIgnoreCase(method))
+        } 
+        else if("unlockAchievement".equalsIgnoreCase(method))
         {
             unlockAchievement(intent.getStringExtra("achievementId"));
             finishActivity();
-        } else
-        if("incrementAchievement".equalsIgnoreCase(method))
+        } 
+        else if("incrementAchievement".equalsIgnoreCase(method))
         {
             incrementAchievement(intent.getStringExtra("achievementId"), intent.getIntExtra("incrementSteps", 0));
             finishActivity();
-        } else
-        if("showAchievements".equalsIgnoreCase(method))
+        } 
+        else if("showAchievements".equalsIgnoreCase(method))
         {
             showAchievements();
             finishActivity();
@@ -191,7 +191,7 @@ public class MainActivity extends GPServicesActivity
     
     private void finishActivity(){
     	System.out.println("MainActivity try to finishActivity:");
-    	//this.finish();
+    	this.finish();
     }
 
 
